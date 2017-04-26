@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Domoffon</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Номер</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Войти</string>
+    <string name="action_sign_in_short">Войти</string>
+    <string name="error_invalid_email">Некорректный номер</string>
+    <string name="error_invalid_password">Пароль слишком короткий</string>
+    <string name="error_incorrect_password">Некорректный пароль</string>
+    <string name="error_field_required">Это поле обязательно!</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="prep_to_reg">Впервые здесь? Зарегестрируйтесь!</string>
+
+    <string name="reg">Регистрация</string>
+    <string name="banner">суперзащита.рф</string>
+    <string name="title_activity_reg">Регистрация</string>
+
+    <!-- Strings related to reg -->
+    <string name="prompt_confirm_password">Подтверждение пароля</string>
+    <string name="prompt_addr">Адрес доставки</string>
+    <string name="prompt_CDEK">Терминал CDEK</string>
+    <string name="prompt_surname">Фамилия</string>
+    <string name="prompt_name">Имя</string>
+    <string name="prompt_patronymic">Отчество</string>
+    <string name="action_reg">Зарегистрироваться</string>
+    <string name="title_activity_regi">Регистрация</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="import_item">Import</string>
+    <string name="gallery_item">Gallery</string>
+    <string name="slideshow_item">Slideshow</string>
+    <string name="tools_item">Tools</string>
+    <string name="communicate_item">Communicate</string>
+    <string name="share_item">Share</string>
+    <string name="send_item">Send</string>
+</resources>
