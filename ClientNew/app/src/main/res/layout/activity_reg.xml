@@ -8,10 +8,12 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="efremov.sg.domoffon.RegActivity">
+    tools:context="efremov.sg.domoffon.RegActivity"
+    android:weightSum="1">
+
     <!-- Login progress -->
     <ProgressBar
-        android:id="@+id/reg_progress"
+        android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,32 +21,31 @@
         android:visibility="gone" />
 
     <ScrollView
-        android:id="@+id/reg_form"
+        android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="458dp">
 
         <LinearLayout
-            android:id="@+id/email_reg_form"
+            android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:weightSum="1">
+            android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            </android.support.design.widget.TextInputLayout>
+                <AutoCompleteTextView
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3.94"
+                    android:hint="@string/prompt_email"
+                    android:inputType="phone"
+                    android:maxLines="1"
+                    android:singleLine="true" />
 
-            <AutoCompleteTextView
-                android:id="@+id/number"
-                android:maxLength="11"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_email"
-                android:inputType="textPhonetic"
-                android:maxLines="1"
-                android:singleLine="true" />
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -102,21 +103,6 @@
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/CDEK"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_CDEK"
-                    android:inputType="textPhonetic"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <AutoCompleteTextView
                     android:id="@+id/surname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -158,15 +144,16 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/email_reg_button"
-                android:background="#7AAE5C"
-                android:textColor="#FFFFFF"
+                android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/action_reg"
+                android:background="#7AAE5C"
+                android:text="@string/action_sign_in"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold" />
+
         </LinearLayout>
     </ScrollView>
     <TextView
@@ -174,10 +161,8 @@
         android:autoLink="web"
         android:layout_width="wrap_content"
         android:layout_marginBottom="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/banner"
-        android:id="@+id/textView2"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1.41" />
+        android:id="@+id/textView2" />
 </LinearLayout>

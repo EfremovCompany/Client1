@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    tools:context="efremov.sg.domoffon.ShopActivity"
-    android:weightSum="1">
-    <!--<TabHost
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="efremov.sg.domoffon.MenuActivity"
+    tools:showIn="@layout/app_bar_menu">
+    <TabHost
         android:id="@+id/tabhost"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_marginTop="55dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -192,10 +192,4 @@
         </LinearLayout>
     </TabHost>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12pt"
-        android:textColor="#049346"
-        android:text="Товары"/>-->
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

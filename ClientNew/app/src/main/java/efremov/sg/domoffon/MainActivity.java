@@ -27,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 OpenShop();
             }
         });
@@ -105,7 +107,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
     }
 
     private void OpenShop(){
-        Intent intent = new Intent(this, ShopActivity.class);
+
+        Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
     }
 
