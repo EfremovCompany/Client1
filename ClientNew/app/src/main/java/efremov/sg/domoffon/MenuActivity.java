@@ -1,20 +1,17 @@
 package efremov.sg.domoffon;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TabHost;
-import android.widget.Toast;
 
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -104,21 +101,23 @@ public class MenuActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        findViewById(R.id.include_edit).setVisibility(View.INVISIBLE);
+        findViewById(R.id.include_main).setVisibility(View.INVISIBLE);
+        findViewById(R.id.include_my).setVisibility(View.INVISIBLE);
+        findViewById(R.id.include_send).setVisibility(View.INVISIBLE);
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
+        if (id == R.id.nav_spec) {
+            findViewById(R.id.include_main).setVisibility(View.VISIBLE);
+        } else if (id == R.id.nav_my) {
+            findViewById(R.id.include_my).setVisibility(View.VISIBLE);
+        } else if (id == R.id.nav_edit) {
+            findViewById(R.id.include_edit).setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_send) {
-
+            findViewById(R.id.include_send).setVisibility(View.VISIBLE);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

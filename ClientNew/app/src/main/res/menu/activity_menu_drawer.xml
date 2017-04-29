@@ -3,30 +3,22 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_spec"
             android:checked="true"
             android:icon="@drawable/ic_work_black_24dp"
             android:title="Товары и спец предложения" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_my"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Мои покупки" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_edit"
             android:icon="@drawable/ic_menu_manage"
             android:title="Редактировать профиль" />
     </group>
 
     <item android:title="Communicate">
         <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
