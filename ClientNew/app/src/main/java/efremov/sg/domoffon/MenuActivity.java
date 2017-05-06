@@ -1,9 +1,12 @@
 package efremov.sg.domoffon;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -15,15 +18,27 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.app.Activity;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.os.Bundle;
 
-public class MenuActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
     protected static final String LOG_TAG = "my_tag";
     TabHost.TabSpec tabSpec;
+    public String secret;
+    public int user_id = 0;
+    public String name;
+    public String surname;
+    public String patronymic;
+    public String cdek;
+    public String addr;
+    public String phone;
 
     private ListView lvP;
     private ListView lvA;
@@ -31,13 +46,29 @@ public class MenuActivity extends AppCompatActivity
     private ProductListAdapter adapterA;
     private List<Product> mProductListA;
     private List<Product> mProductList;
+    private SwipeRefreshLayout mSwipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_menu);
+        }
+        catch(Exception e)
+        {
+            e.getMessage();
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Intent intent = getIntent();
+        intent.getIntExtra("response", user_id);
+        //secret = intent.getStringExtra("secret");
+        name = intent.getStringExtra("name");
+        surname = intent.getStringExtra("surname");
+        patronymic = intent.getStringExtra("patronymic");
+        cdek = intent.getStringExtra("cdek");
+        addr = intent.getStringExtra("addr");
+        phone = intent.getStringExtra("phone");
 
         //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         /*fab.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +87,13 @@ public class MenuActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView  = (View) navigationView.inflateHeaderView(R.layout.nav_header_menu);
+        TextView nameTxt = (TextView) headerView.findViewById(R.id.textViewNameUser);
+        TextView surTxt = (TextView) headerView.findViewById(R.id.textViewSurUser);
+        TextView patTxt = (TextView) headerView.findViewById(R.id.textViewPatUser);
+        nameTxt.setText(name);
+        surTxt.setText(surname);
+        patTxt.setText(patronymic);
         TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
         // инициализация
         tabHost.setup();
@@ -97,9 +135,25 @@ public class MenuActivity extends AppCompatActivity
 
         adapterA = new ProductListAdapter(getApplicationContext(), mProductListA);
         lvA.setAdapter(adapterA);
+
+        mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+
+        //Настраиваем выполнение OnRefreshListener для данной activity:
+        mSwipeRefresh.setOnRefreshListener(this);
+        //Настраиваем цветовую тему значка обновления, используя наши цвета:
+        mSwipeRefresh.setColorSchemeResources
+                (R.color.primary_material_light_1, R.color.colorAccent,R.color.colorPrimaryDark);
     }
 
+    @Override
+    public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
 
+                //Останавливаем обновление:
+                mSwipeRefresh.setRefreshing(false)
+                ;}}, 5000);
+    }
 
     @Override
     public void onBackPressed() {

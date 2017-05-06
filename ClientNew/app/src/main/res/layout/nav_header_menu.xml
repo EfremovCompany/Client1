@@ -16,17 +16,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Фамилия"
+        android:id="@+id/textViewSurUser"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textViewNameUser"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Имя" />
+        android:layout_height="wrap_content" />
     <TextView
+        android:id="@+id/textViewPatUser"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Отчество" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

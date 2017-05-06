@@ -7,8 +7,13 @@ type AuthAndRegOK struct {
 	UserID     int
 }
 
+type Success struct {
+	Code int
+}
+
 type UserInfo struct {
 	Code       int
+	UserID     int
 	Name       string
 	Surname    string
 	Patronymic string

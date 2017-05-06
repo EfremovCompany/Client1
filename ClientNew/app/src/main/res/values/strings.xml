@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Domoffon</string>
 
+    <!--Main-->
+    <string name="server_ip">http://192.168.1.36:8080/</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Номер</string>
     <string name="prompt_password">Пароль</string>

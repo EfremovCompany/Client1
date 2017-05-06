@@ -29,8 +29,25 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -43,6 +60,23 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+
+    public void OpenShop(int res, String secret, String n, String s, String p, String c, String a, String phone){
+        Intent intent = new Intent(this, MenuActivity.class);
+        intent.putExtra("response", res);
+        intent.putExtra("secret", secret);
+        intent.putExtra("name", n);
+        intent.putExtra("surname", s);
+        intent.putExtra("patronymic", p);
+        intent.putExtra("cdek", c);
+        intent.putExtra("addr", a);
+        intent.putExtra("phone", phone);
+
+        startActivity(intent);
+        this.finish();
+
+    }
+
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -66,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setupActionBar();
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -79,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
                     return true;
                 }
                 return false;
-
             }
         });
 
@@ -87,34 +121,12 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                OpenShop();
+                attemptLogin();
             }
         });
-
-        Button mReg = (Button) findViewById(R.id.reg_button);
-        mReg.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                OpenReg();
-                //attemptLogin();
-            }
-        });
-
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-    }
-
-    private void OpenShop(){
-
-        Intent intent = new Intent(this, MenuActivity.class);
-        startActivity(intent);
-    }
-
-    private void OpenReg(){
-        Intent intent = new Intent(this, RegActivity.class);
-        startActivity(intent);
     }
 
     private void populateAutoComplete() {
@@ -160,6 +172,16 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         }
     }
 
+    /**
+     * Set up the {@link android.app.ActionBar}, if the API is available.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setupActionBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            // Show the Up button in the action bar.
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -194,10 +216,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
 
         if (cancel) {
@@ -211,11 +229,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
@@ -319,6 +332,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
+        private String response;
+
         private final String mEmail;
         private final String mPassword;
 
@@ -332,10 +347,55 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
                 Thread.sleep(2000);
+                URL myURL = new URL(getString(R.string.server_ip));
+                //HttpURLConnection urlConnection = (HttpURLConnection) myURL.openConnection();
+                HttpURLConnection conn = (HttpURLConnection) myURL.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("key", "auth")
+                        .appendQueryParameter("login", mEmail)
+                        .appendQueryParameter("pass", mPassword);
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer resp = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    resp.append(inputLine);
+                }
+                in.close();
+
+                response = resp.toString();
+                // Simulate network access
             } catch (InterruptedException e) {
                 return false;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                response = e.getMessage();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+                response = e.getMessage();
+            } catch (IOException e) {
+                e.printStackTrace();
+                response = e.getMessage();
             }
 
             for (String credential : DUMMY_CREDENTIALS) {
@@ -356,7 +416,48 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
             showProgress(false);
 
             if (success) {
-                finish();
+                //Intent intent = new Intent (this, ShopActivity.class);
+                int answer = 0;
+                String secret = "";
+                String name = "";
+                String sur = "";
+                String pat = "";
+                String cdek = "";
+                String addr = "";
+                String phone = "";
+                //TODO: append check response
+                try {
+                    JSONObject dataJsonObj = new JSONObject(response);
+                    int code = dataJsonObj.getInt("Code");
+                    if (code == 200)
+                    {
+                        answer = dataJsonObj.getInt("UserID");
+                        //secret = dataJsonObj.getString("SecretCode");
+                        name = dataJsonObj.getString("Name");
+                        sur = dataJsonObj.getString("Surname");
+                        pat = dataJsonObj.getString("Patronymic");
+                        cdek = dataJsonObj.getString("Cdek");
+                        addr = dataJsonObj.getString("Addr");
+                        phone = dataJsonObj.getString("Number");
+                    }
+                    else
+                    {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                dataJsonObj.getString("Error"),
+                                Toast.LENGTH_SHORT);
+                        toast.show();
+                        return;
+                    }
+                } catch (JSONException e) {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Ошибка на стороне сервера",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                    return;
+                }
+
+                OpenShop(answer, secret, name, sur, pat, cdek, addr, phone);
+                //finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
