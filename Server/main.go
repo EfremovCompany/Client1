@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/md5"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -12,62 +11,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type AuthAndRegOK struct {
-	Code       int
-	SecretCode string
-	UserID     int
-}
-
-type UserInfo struct {
-	Code       int
-	Name       string
-	Surname    string
-	Patronymic string
-	Cdek       string
-	Addr       string
-	Number     string
-}
-
-type OrderOK struct {
-	Code int
-}
-
-type Orders struct {
-	Id        int
-	idproduct int
-	Status    string
-	Price     int
-	Addr      string
-}
-
-type OrderArray struct {
-	Code   int
-	Count  int
-	Orders []Orders
-}
-
-type AuthAndRegFailed struct {
-	Code  int
-	Error string
-}
-
-type Profile struct {
-	Code       int
-	SecretCode string
-}
-
-type Product struct {
-	Name      string
-	Des       string
-	Count     int
-	Min_prise float64
-	Scr       string
-}
-
-type ProductArray struct {
-	Code     int
-	Count    int
-	ProductI []Product
+func PrintToScreen(w http.ResponseWriter, r *http.Request, struct *inp) {
+	js, err := json.Marshal(inp)
+	checkErr(err)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 func main() {
@@ -80,120 +28,6 @@ func checkErr(err error) {
 		fmt.Println(err.Error())
 		log.Fatal(err.Error())
 	}
-}
-
-func secret(someStr string) string {
-	h := md5.New()
-	h.Write([]byte(someStr))
-	return fmt.Sprintf("%x", h.Sum(nil))
-}
-
-func BadSecret(w http.ResponseWriter) {
-	authAndRegFailed := AuthAndRegFailed{403, "Неправильный секретный пароль"}
-	js, err := json.Marshal(authAndRegFailed)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
-}
-
-func GetSecretPassword() string {
-	return "4mcq5xxoz9nf6pn7fl8ensm40"
-}
-
-func sendorder(w http.ResponseWriter, r *http.Request) {
-	if r.FormValue("secret") != GetSecretPassword() {
-		BadSecret(w)
-		return
-	}
-	db, err := sql.Open("mysql", "root:root@/mydb")
-	checkErr(err)
-	rows, err := db.Query("SELECT idorder FROM mydb.order")
-	checkErr(err)
-	var uid int
-	for rows.Next() {
-		err = rows.Scan(&uid)
-		checkErr(err)
-	}
-
-	price := r.FormValue("price")
-	count := r.FormValue("count")
-	//addr := r.FormValue("addr")
-	rows, err = db.Query("SELECT addr FROM users WHERE idusers=" + r.FormValue("iduser"))
-
-	var addr string = ""
-	for rows.Next() {
-		err = rows.Scan(&addr)
-		checkErr(err)
-	}
-
-	//summ := 0 //strconv.Itoa(price) * strconv.Itoa(count)
-	//checkErr(err)
-
-	fmt.Println("Client connected " + r.RemoteAddr)
-	id := r.FormValue("iduser")
-	idproduct := r.FormValue("idproduct")
-	stmt, err := db.Prepare("INSERT mydb.order SET idorder=\"" +
-		strconv.Itoa(uid+1) + "\", iduser=" +
-		id + ", idproduct=" +
-		idproduct + ", status=\"Ожидание\", price=\"" +
-		price + "\", addr=\"" +
-		addr + "\"")
-	checkErr(err)
-
-	_, err = stmt.Exec()
-	checkErr(err)
-
-	stmt, err = db.Prepare("UPDATE mydb.product SET count=count-" + count + " WHERE idproduct=\"" +
-		idproduct + "\"")
-	checkErr(err)
-
-	_, err = stmt.Exec()
-	checkErr(err)
-
-	authAndRegOK := OrderOK{200}
-	js, err := json.Marshal(authAndRegOK)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
-	db.Close()
-}
-
-func auth(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", "root:root@/mydb")
-	checkErr(err)
-	fmt.Println("Client connected " + r.RemoteAddr)
-	login := r.FormValue("login")
-	pass := secret(r.FormValue("pass"))
-	rows, err := db.Query("SELECT idusers FROM users WHERE login=\"" + login + "\"AND pass=\"" + pass + "\"")
-	checkErr(err)
-	for rows.Next() {
-		var username int
-		err = rows.Scan(&username)
-		authAndRegOK := AuthAndRegOK{200, GetSecretPassword(), username}
-		js, err := json.Marshal(authAndRegOK)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(js)
-		return
-	}
-	authAndRegFailed := AuthAndRegFailed{403, "Неправильный пароль"}
-	js, err := json.Marshal(authAndRegFailed)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
-	db.Close()
 }
 
 func reg(w http.ResponseWriter, r *http.Request) {
@@ -277,18 +111,13 @@ func getorderinfo(w http.ResponseWriter, r *http.Request) {
 		BadSecret(w)
 		return
 	}
-	db, err := sql.Open("mysql", "root:root@/mydb")
-	checkErr(err)
-	fmt.Println("Client connected " + r.RemoteAddr)
-	rows, err := db.Query("SELECT idproduct FROM mydb.order WHERE iduser=" + r.FormValue("id"))
-	checkErr(err)
+	rows := GetAnswer("SELECT idproduct FROM mydb.order WHERE iduser=" + r.FormValue("id"))
 	i := 0
 	for rows.Next() {
 
 		i += 1
 	}
-	rows, err = db.Query("SELECT idorder, idproduct, status, price, addr FROM mydb.order WHERE iduser=" + r.FormValue("id"))
-	checkErr(err)
+	rows = GetAnswer("SELECT idorder, idproduct, status, price, addr FROM mydb.order WHERE iduser=" + r.FormValue("id"))
 
 	var prod []Orders = make([]Orders, i)
 
@@ -300,7 +129,7 @@ func getorderinfo(w http.ResponseWriter, r *http.Request) {
 		var status string
 		var price int
 		var addr string
-		err = rows.Scan(&id, &idProduct, &status, &price, &addr)
+		err := rows.Scan(&id, &idProduct, &status, &price, &addr)
 
 		checkErr(err)
 
@@ -315,8 +144,6 @@ func getorderinfo(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
-	//w.Write([]byte("Ok"))
-	db.Close()
 }
 
 func getuserinfo(w http.ResponseWriter, r *http.Request) {
@@ -324,11 +151,7 @@ func getuserinfo(w http.ResponseWriter, r *http.Request) {
 		BadSecret(w)
 		return
 	}
-	db, err := sql.Open("mysql", "root:root@/mydb")
-	checkErr(err)
-	fmt.Println("Client connected " + r.RemoteAddr)
-	rows, err := db.Query("SELECT name, surname, patronymic, cdek, addr, login  FROM users WHERE idusers=\"" + r.FormValue("id") + "\"")
-	checkErr(err)
+	rows := GetAnswer("SELECT name, surname, patronymic, cdek, addr, login  FROM users WHERE idusers=\"" + r.FormValue("id") + "\"")
 	var username string
 	var surname string
 	var patronymic string
@@ -336,7 +159,7 @@ func getuserinfo(w http.ResponseWriter, r *http.Request) {
 	var addr string
 	var number string
 	for rows.Next() {
-		err = rows.Scan(&username, &surname, &patronymic, &cdek, &addr, &number)
+		err := rows.Scan(&username, &surname, &patronymic, &cdek, &addr, &number)
 		checkErr(err)
 	}
 	jsonM := UserInfo{200, username, surname, patronymic, cdek, addr, number}
@@ -347,7 +170,6 @@ func getuserinfo(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
-	db.Close()
 }
 
 func getproduct(w http.ResponseWriter, r *http.Request) {
@@ -355,17 +177,13 @@ func getproduct(w http.ResponseWriter, r *http.Request) {
 		BadSecret(w)
 		return
 	}
-	db, err := sql.Open("mysql", "root:root@/mydb")
-	checkErr(err)
 
-	rows, err := db.Query("SELECT idproduct FROM product")
-	checkErr(err)
+	rows := GetAnswer("SELECT idproduct FROM product")
 	i := 0
 	for rows.Next() {
 		i += 1
 	}
-	rows, err = db.Query("SELECT * FROM product")
-	checkErr(err)
+	rows = GetAnswer("SELECT * FROM product")
 
 	var prod []Product = make([]Product, i)
 
@@ -378,7 +196,7 @@ func getproduct(w http.ResponseWriter, r *http.Request) {
 		var count int
 		var min_price float64
 		var src string
-		err = rows.Scan(&uid, &name, &des, &count, &min_price, &src)
+		err := rows.Scan(&uid, &name, &des, &count, &min_price, &src)
 
 		checkErr(err)
 
@@ -393,12 +211,17 @@ func getproduct(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
-	//w.Write([]byte("Ok"))
-	db.Close()
+}
+
+func editusr(w http.ResponseWriter, r *http.Request) {
+	/*rows := */ GetAnswer("SELECT surname FROM users")
+	//var data = rows.Next()
+	//w.Write(data)
 }
 
 func foo(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
+		fmt.Println(r.FormValue("key"))
 		switch key := r.FormValue("key"); key {
 		case "sendorder":
 			sendorder(w, r)
@@ -406,6 +229,9 @@ func foo(w http.ResponseWriter, r *http.Request) {
 			auth(w, r)
 		case "reg":
 			reg(w, r)
+		case "editusr":
+			fmt.Println("2")
+			editusr(w, r)
 		default:
 			w.Write([]byte("{ \"ErrorCode\" : 500, \"Error\" : \"Ошибка сервера\" }"))
 			return
