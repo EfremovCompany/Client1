@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import android.app.Activity;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -50,14 +52,9 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_menu);
-        }
-        catch(Exception e)
-        {
-            e.getMessage();
-        }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_menu);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Intent intent = getIntent();
@@ -136,23 +133,36 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         adapterA = new ProductListAdapter(getApplicationContext(), mProductListA);
         lvA.setAdapter(adapterA);
 
-        mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        //mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 
         //Настраиваем выполнение OnRefreshListener для данной activity:
+        mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefresh.setOnRefreshListener(this);
+
+
+        mSwipeRefresh.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        //mSwipeRefresh.setOnRefreshListener(this);
         //Настраиваем цветовую тему значка обновления, используя наши цвета:
-        mSwipeRefresh.setColorSchemeResources
-                (R.color.primary_material_light_1, R.color.colorAccent,R.color.colorPrimaryDark);
+        //mSwipeRefresh.setColorSchemeResources
+        //        (R.color.primary_material_light_1, R.color.colorAccent,R.color.colorPrimaryDark);
     }
 
     @Override
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
-
-                //Останавливаем обновление:
-                mSwipeRefresh.setRefreshing(false)
-                ;}}, 5000);
+            @Override
+            public void run() {
+                // Отменяем анимацию обновления
+                mSwipeRefresh.setRefreshing(false);
+                Random random = new Random();
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Пора покормить кота!", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }, 4000);
     }
 
     @Override

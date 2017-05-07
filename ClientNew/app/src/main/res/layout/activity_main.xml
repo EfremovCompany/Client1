@@ -44,6 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_email"
+
                 android:inputType="phone"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -67,6 +68,11 @@
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
+            <CheckBox
+                android:id="@+id/chcbxsave"
+                android:text="Сохранить"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
             <Button
                 android:id="@+id/email_sign_in_button"

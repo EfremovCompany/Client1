@@ -57,11 +57,13 @@ func reg(w http.ResponseWriter, r *http.Request) {
 		"\",name=\"" + name +
 		"\",patronymic=\"" + patronymic + "\"")
 
-	authAndRegOK := AuthAndRegOK{200, GetSecretPassword(), uid + 1}
+	getuserinfoFromAuth(w, uid+1)
+
+	/*authAndRegOK := AuthAndRegOK{200, GetSecretPassword(), uid + 1}
 	js, err := json.Marshal(authAndRegOK)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	PrintToScreen(w, js)
+	PrintToScreen(w, js)*/
 }

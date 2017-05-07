@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,7 +19,12 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.telephony.PhoneNumberUtils;
+import android.telephony.TelephonyManager;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,6 +32,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,8 +68,15 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    SharedPreferences sPref;
+
+    final String SAVED_TEXT = "";
 
     public void OpenShop(int res, String secret, String n, String s, String p, String c, String a, String phone){
+        if (mCheckBox.isChecked())
+        {
+            saveText();
+        }
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra("response", res);
         intent.putExtra("secret", secret);
@@ -75,6 +90,24 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         startActivity(intent);
         this.finish();
 
+    }
+
+    private void saveText() {
+        sPref = getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(SAVED_TEXT, mEmailView.getText().toString());
+        ed.commit();
+    }
+
+    private void loadText() {
+        sPref = getSharedPreferences("MyPref", MODE_PRIVATE);
+        String savedText = sPref.getString(SAVED_TEXT, "");
+        mEmailView.setText(savedText);
+    }
+
+    private void StartRegActivity(){
+        Intent intent = new Intent(this, RegActivity.class);
+        startActivity(intent);
     }
 
 
@@ -95,6 +128,15 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private CheckBox mCheckBox;
+    private Button mButtonReg;
+
+    void beforeTextChanged (CharSequence s,
+                            int start,
+                            int count,
+                            int after){
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +145,76 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         setupActionBar();
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView.addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
+            //we need to know if the user is erasing or inputing some new character
+            private boolean backspacingFlag = false;
+            //we need to block the :afterTextChanges method to be called again after we just replaced the EditText text
+            private boolean editedFlag = false;
+            //we need to mark the cursor position and restore it after the edition
+            private int cursorComplement;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //we store the cursor local relative to the end of the string in the EditText before the edition
+                cursorComplement = s.length()-mEmailView.getSelectionStart();
+                //we check if the user ir inputing or erasing a character
+                if (count > after) {
+                    backspacingFlag = true;
+                } else {
+                    backspacingFlag = false;
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // nothing to do here =D
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String string = s.toString();
+                //what matters are the phone digits beneath the mask, so we always work with a raw string with only digits
+                String phone = string.replaceAll("[^\\d]", "");
+
+                //if the text was just edited, :afterTextChanged is called another time... so we need to verify the flag of edition
+                //if the flag is false, this is a original user-typed entry. so we go on and do some magic
+                if (!editedFlag) {
+
+                    //we start verifying the worst case, many characters mask need to be added
+                    //example: 999999999 <- 6+ digits already typed
+                    // masked: (999) 999-999
+                    if (phone.length() >= 1 && phone.substring(0, 1).contains("7"))
+                    {
+                        phone = phone.replace(phone.substring(0, 1), "8");
+                    }
+                    if (phone.length() >= 7 && !backspacingFlag) {
+                        //we will edit. next call on this textWatcher will be ignored
+                        editedFlag = true;
+                        //here is the core. we substring the raw digits and add the mask as convenient
+                        String ans = phone.substring(0, 1) + "(" +phone.substring(1, 4) + ") " + phone.substring(4,7) + "-" + phone.substring(7);
+                        mEmailView.setText(ans);
+                        //we deliver the cursor to its original position relative to the end of the string
+                        mEmailView.setSelection(mEmailView.getText().length()-cursorComplement);
+
+                        //we end at the most simple case, when just one character mask is needed
+                        //example: 99999 <- 3+ digits already typed
+                        // masked: (999) 99
+                    } else if (phone.length() >= 4 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = phone.substring(0, 1) + "(" +phone.substring(1, 4) + ") " + phone.substring(4);
+                        mEmailView.setText(ans);
+                        mEmailView.setSelection(mEmailView.getText().length()-cursorComplement);
+                    }
+                    // We just edited the field, ignoring this cicle of the watcher and getting ready for the next
+                } else {
+                    editedFlag = false;
+                }
+            }
+        });
         populateAutoComplete();
+        //loadText();
+
+        mCheckBox = (CheckBox) findViewById(R.id.chcbxsave);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -114,6 +225,14 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
                     return true;
                 }
                 return false;
+            }
+        });
+
+        mButtonReg = (Button) findViewById(R.id.reg_button);
+        mButtonReg.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StartRegActivity();
             }
         });
 

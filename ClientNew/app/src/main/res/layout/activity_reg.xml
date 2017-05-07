@@ -13,7 +13,7 @@
 
     <!-- Login progress -->
     <ProgressBar
-        android:id="@+id/login_progress"
+        android:id="@+id/reg_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,9 +21,10 @@
         android:visibility="gone" />
 
     <ScrollView
-        android:id="@+id/login_form"
+        android:id="@+id/reg_form"
         android:layout_width="match_parent"
-        android:layout_height="458dp">
+        android:layout_height="459dp"
+        android:layout_weight="0.30">
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -107,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_surname"
-                    android:inputType="textPhonetic"
+                    android:inputType="textCapWords"
                     android:maxLines="1"
                     android:singleLine="true" />
 
@@ -122,7 +123,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_name"
-                    android:inputType="textPersonName"
+                    android:inputType="textCapWords"
                     android:maxLines="1"
                     android:singleLine="true" />
 
@@ -137,14 +138,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_patronymic"
-                    android:inputType="textPersonName"
+                    android:inputType="textCapWords"
                     android:maxLines="1"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/regbutton"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -156,13 +157,14 @@
 
         </LinearLayout>
     </ScrollView>
+
     <TextView
-        android:layout_alignParentBottom="true"
-        android:autoLink="web"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp"
-        android:layout_height="36dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:autoLink="web"
         android:text="@string/banner"
-        android:id="@+id/textView2" />
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 </LinearLayout>

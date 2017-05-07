@@ -3,6 +3,7 @@ package efremov.sg.domoffon;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -28,7 +29,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +70,17 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private UserRegTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private EditText mCPasswordView;
+    private EditText mAddrView;
+    //private EditText mCDEKView;
+    private EditText mSurnameView;
+    private EditText mNameView;
+    private EditText mPatronymicView;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -72,6 +94,13 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
+        mCPasswordView = (EditText) findViewById(R.id.confirm_password);
+        mAddrView = (EditText) findViewById(R.id.addr);
+        //mCDEKView = (EditText) findViewById(R.id.cd);
+        mSurnameView = (EditText) findViewById(R.id.surname);
+        mNameView = (EditText) findViewById(R.id.name);
+        mPatronymicView = (EditText) findViewById(R.id.patronymic);
+
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -83,7 +112,7 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.regbutton);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,8 +120,8 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mLoginFormView = findViewById(R.id.reg_form);
+        mProgressView = findViewById(R.id.reg_progress);
     }
 
     private void populateAutoComplete() {
@@ -137,6 +166,20 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
             }
         }
     }
+    public void OpenShop(int res, String secret, String n, String s, String p, String c, String a, String phone){
+        Intent intent = new Intent(this, MenuActivity.class);
+        intent.putExtra("response", res);
+        intent.putExtra("secret", secret);
+        intent.putExtra("name", n);
+        intent.putExtra("surname", s);
+        intent.putExtra("patronymic", p);
+        intent.putExtra("cdek", c);
+        intent.putExtra("addr", a);
+        intent.putExtra("phone", phone);
+
+        startActivity(intent);
+        this.finish();
+    }
 
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
@@ -162,10 +205,23 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+        mCPasswordView.setError(null);
+        mAddrView.setError(null);
+        //mCDEKView.setError(null);
+        mSurnameView.setError(null);
+        mNameView.setError(null);
+        mPatronymicView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String confirm = mCPasswordView.getText().toString();
+        String addr = mAddrView.getText().toString();
+        //String cdek = mCDEKView.getText().toString();
+        String surname = mSurnameView.getText().toString();
+        String name = mNameView.getText().toString();
+        String patronymic = mPatronymicView.getText().toString();
+
 
         boolean cancel = false;
         View focusView = null;
@@ -176,6 +232,48 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
             focusView = mPasswordView;
             cancel = true;
         }
+
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(confirm) && !isPasswordValid(confirm)) {
+            mCPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mCPasswordView;
+            cancel = true;
+        }
+
+        //Confirm password and password
+        if (!password.equals(confirm))
+        {
+            mPasswordView.setError("Пароли не совпадают!");
+            mCPasswordView.setError("Пароли не совпадают!");
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
+        //Check main params
+        if (addr.isEmpty())
+        {
+            mAddrView.setError("Обязательное поле");
+            cancel = true;
+        }
+
+        if (surname.isEmpty())
+        {
+            mSurnameView.setError("Обязательное поле");
+            cancel = true;
+        }
+
+        if (name.isEmpty())
+        {
+            mNameView.setError("Обязательное поле");
+            cancel = true;
+        }
+
+        if (patronymic.isEmpty())
+        {
+            mPatronymicView.setError("Обязательное поле");
+            cancel = true;
+        }
+        //-------
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -188,6 +286,7 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
             cancel = true;
         }
 
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -196,14 +295,18 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserRegTask(email, password, addr, "", surname, name, patronymic);
             mAuthTask.execute((Void) null);
         }
     }
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        if (email.length()!=11&&Integer.valueOf(email.substring(0,1))!=9)
+        {
+            return false;
+        }
+        return true;
     }
 
     private boolean isPasswordValid(String password) {
@@ -305,14 +408,31 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserRegTask extends AsyncTask<Void, Void, Boolean> {
+
+        private String response;
 
         private final String mEmail;
         private final String mPassword;
+        private final String mAddr;
+        private final String mCDEK;
+        private final String mSurname;
+        private final String mName;
+        private final String mPatronymic;
 
-        UserLoginTask(String email, String password) {
+        public String GetResponse()
+        {
+            return response;
+        }
+
+        UserRegTask(String email, String password, String addr, String cdek, String surname, String name, String patronymic) {
             mEmail = email;
             mPassword = password;
+            mAddr = addr;
+            mCDEK = cdek;
+            mSurname = surname;
+            mName = name;
+            mPatronymic = patronymic;
         }
 
         @Override
@@ -320,10 +440,63 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
                 Thread.sleep(2000);
+                URL myURL = new URL(getString(R.string.server_ip));
+                //HttpURLConnection urlConnection = (HttpURLConnection) myURL.openConnection();
+                HttpURLConnection conn = (HttpURLConnection) myURL.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("key", "reg")
+                        .appendQueryParameter("login", mEmail)
+                        .appendQueryParameter("pass", mPassword)
+                        .appendQueryParameter("addr", mAddr)
+                        .appendQueryParameter("cdek", mCDEK)
+                        .appendQueryParameter("surname", mSurname)
+                        .appendQueryParameter("name", mName)
+                        .appendQueryParameter("patronymic", mPatronymic);
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer resp = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    resp.append(inputLine);
+                }
+                in.close();
+
+                response = resp.toString();
+                // Simulate network access
             } catch (InterruptedException e) {
                 return false;
+            } catch (MalformedURLException e) {
+                response = e.getMessage();
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                response = e.getMessage();
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                response = e.getMessage();
+                e.printStackTrace();
+            } catch (IOException e) {
+                response = e.getMessage();
+                e.printStackTrace();
             }
 
             for (String credential : DUMMY_CREDENTIALS) {
@@ -333,8 +506,6 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
                     return pieces[1].equals(mPassword);
                 }
             }
-
-            // TODO: register the new account here.
             return true;
         }
 
@@ -344,7 +515,48 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
             showProgress(false);
 
             if (success) {
-                finish();
+                //Intent intent = new Intent (this, ShopActivity.class);
+                int answer = 0;
+                String secret = "";
+                String name = "";
+                String sur = "";
+                String pat = "";
+                String cdek = "";
+                String addr = "";
+                String phone = "";
+                //TODO: append check response
+                try {
+                    JSONObject dataJsonObj = new JSONObject(response);
+                    int code = dataJsonObj.getInt("Code");
+                    if (code == 200)
+                    {
+                        answer = dataJsonObj.getInt("UserID");
+                        //secret = dataJsonObj.getString("SecretCode");
+                        name = dataJsonObj.getString("Name");
+                        sur = dataJsonObj.getString("Surname");
+                        pat = dataJsonObj.getString("Patronymic");
+                        cdek = dataJsonObj.getString("Cdek");
+                        addr = dataJsonObj.getString("Addr");
+                        phone = dataJsonObj.getString("Number");
+                    }
+                    else
+                    {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                dataJsonObj.getString("Error"),
+                                Toast.LENGTH_SHORT);
+                        toast.show();
+                        return;
+                    }
+                } catch (JSONException e) {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Ошибка на стороне сервера",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                    return;
+                }
+
+                OpenShop(answer, secret, name, sur, pat, cdek, addr, phone);
+                //finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
