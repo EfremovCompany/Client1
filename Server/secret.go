@@ -14,6 +14,10 @@ func secret(someStr string) string {
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
+func CheckAdminSecret(input string) bool {
+	return "UPISsyxr1HYaDz2vuxZ81g6O7" == input
+}
+
 func BadSecret(w http.ResponseWriter) {
 	authAndRegFailed := AuthAndRegFailed{403, "Неправильный секретный пароль"}
 	js, err := json.Marshal(authAndRegFailed)

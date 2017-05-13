@@ -7,6 +7,11 @@ type AuthAndRegOK struct {
 	UserID     int
 }
 
+type AddrReturn struct {
+	Code int
+	Addr string
+}
+
 type Success struct {
 	Code int
 }
@@ -48,6 +53,18 @@ type AuthAndRegFailed struct {
 type Profile struct {
 	Code       int
 	SecretCode string
+}
+
+type WhiteList struct {
+	Id     int
+	Number string
+	Addr   string
+}
+
+type WhiteListArray struct {
+	Code       int
+	Count      int
+	WhiteListI []WhiteList
 }
 
 type Product struct {

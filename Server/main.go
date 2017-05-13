@@ -16,6 +16,15 @@ func PrintToScreen(w http.ResponseWriter, js []byte) {
 
 func main() {
 	http.HandleFunc("/", foo)
+	http.HandleFunc("/sendorder", sendorder)
+	http.HandleFunc("/auth", auth)
+	http.HandleFunc("/reg", reg)
+	http.HandleFunc("/editusr", editusr)
+	http.HandleFunc("/getorder", getorderinfo)
+	http.HandleFunc("/userinfo", getuserinfo)
+	http.HandleFunc("/getproduct", getproduct)
+	http.HandleFunc("/getaddr", getaddr)
+	http.HandleFunc("/admin", admin)
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -27,7 +36,7 @@ func checkErr(err error) {
 }
 
 func foo(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	/*if r.Method == "POST" {
 		fmt.Println(r.FormValue("key"))
 		switch key := r.FormValue("key"); key {
 		case "sendorder":
@@ -52,20 +61,22 @@ func foo(w http.ResponseWriter, r *http.Request) {
 			getuserinfo(w, r)
 		case "getproduct":
 			getproduct(w, r)
+		case "getaddr":
+			getaddr(w, r)
 		default:
 			w.Write([]byte("{ \"Code\" : 500, \"Error\" : \"Ошибка сервера\" }"))
 			return
 		}
-	} else {
-		profile := Profile{200, "0"}
+	} else {*/
+	profile := Profile{200, "0"}
 
-		js, err := json.Marshal(profile)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(js)
+	js, err := json.Marshal(profile)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
+	//}
 }
