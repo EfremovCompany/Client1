@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#dddddd"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="efremov.sg.domoffon.MenuActivity"
     tools:showIn="@layout/app_bar_menu">
@@ -14,54 +15,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-    <TabHost
-        android:id="@+id/tabhost"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TabWidget
-                        android:id="@android:id/tabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                    <FrameLayout
-                        android:id="@android:id/tabcontent"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <LinearLayout
-                            android:id="@+id/tab1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
-
-                            <ListView android:layout_width="match_parent"
-                                android:layout_marginLeft="15dp"
-                                android:layout_height="match_parent"
-                                android:id="@+id/listview_product"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/tab2"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
-
-                            <ListView
-                                android:layout_marginLeft="15dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:id="@+id/listview_a"></ListView>
-                        </LinearLayout>
-
-                    </FrameLayout>
-                </LinearLayout>
-            </TabHost>
+        <ListView android:layout_width="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_height="match_parent"
+            android:id="@+id/listview_product"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

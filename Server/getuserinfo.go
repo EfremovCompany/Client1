@@ -25,7 +25,7 @@ func getuserinfo(w http.ResponseWriter, r *http.Request) {
 	}
 	intID, err := strconv.Atoi(r.FormValue("id"))
 	checkErr(err)
-	jsonM := UserInfo{200, intID, username, surname, patronymic, cdek, addr, number}
+	jsonM := UserInfo{200, intID, GetSecretPassword(), username, surname, patronymic, cdek, addr, number}
 	js, err := json.Marshal(jsonM)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -46,7 +46,7 @@ func getuserinfoFromAuth(w http.ResponseWriter, id int) {
 		err := rows.Scan(&username, &surname, &patronymic, &cdek, &addr, &number)
 		checkErr(err)
 	}
-	jsonM := UserInfo{200, id, username, surname, patronymic, cdek, addr, number}
+	jsonM := UserInfo{200, id, GetSecretPassword(), username, surname, patronymic, cdek, addr, number}
 	js, err := json.Marshal(jsonM)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

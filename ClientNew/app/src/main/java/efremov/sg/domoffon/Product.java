@@ -10,13 +10,15 @@ public class Product {
     private String des;
     private int count;
     private int price;
+    private String src;
 
-    public Product(int id, String name, String des, int count, int price) {
+    public Product(int id, String name, String des, int count, int price, String src) {
         this.id = id;
         this.name = name;
         this.des = des;
         this.count = count;
         this.price = price;
+        this.src = src;
     }
 
     public int getId() {
@@ -59,5 +61,11 @@ public class Product {
         this.price = price;
     }
 
+    public String getSrc() {
+        return src;
+    }
 
+    public void setSrc(String src) {
+        this.src = src;
+    }
 }

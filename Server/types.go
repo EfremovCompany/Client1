@@ -19,6 +19,7 @@ type Success struct {
 type UserInfo struct {
 	Code       int
 	UserID     int
+	Secret     string
 	Name       string
 	Surname    string
 	Patronymic string

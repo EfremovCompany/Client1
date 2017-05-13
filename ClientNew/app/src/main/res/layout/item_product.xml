@@ -1,38 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="15dp"
-    android:layout_marginLeft="15dp">
+    android:background="#dddddd"
+    android:layout_marginLeft="15dp"
+    android:layout_marginBottom="15dp"
+    android:layout_marginRight="15dp"
+    android:weightSum="1">
 
     <TextView
+        android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14pt"
-        android:textColor="#049346"
+        android:background="#7AAE5C"
+        android:textColor="#FFFFFF"
         android:text="Name"
         android:id="@+id/listview_item_name"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="10pt"
+        android:background="#FFFFFF"
+        android:textSize="8pt"
         android:text="Des"
         android:textColor="#000000"
         android:id="@+id/listview_item_des"/>
-    <TextView
+    <ImageView
+        android:id="@+id/listview_item_img"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12pt"
-        android:text="Count"
-        android:textColor="#000000"
-        android:id="@+id/listview_item_count"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12pt"
-        android:text="Price"
-        android:textColor="#000000"
-        android:id="@+id/listview_item_price"/>
+        android:src="@mipmap/logo"
+        android:background="#FFFFFF"
+        android:layout_height="218dp" />
+    <TableLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <TableRow android:background="#049346"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
 
+            <TextView
+                android:id="@+id/listview_item_count"
+                android:layout_height="wrap_content"
+                android:text="Count"
+                android:textColor="#FFFFFF"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="50dp"
+                android:textSize="12pt"/>
+
+
+            <TextView
+                android:id="@+id/listview_item_price"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Price"
+                android:textColor="#FFFFFF"
+                android:textSize="12pt"/>
+
+        </TableRow>
+    </TableLayout>
 
 </LinearLayout>

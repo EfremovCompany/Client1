@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
             }
         });
         populateAutoComplete();
-        //loadText();
+        loadText();
 
         mCheckBox = (CheckBox) findViewById(R.id.chcbxsave);
 
@@ -467,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
 
             try {
                 Thread.sleep(2000);
-                URL myURL = new URL(getString(R.string.server_ip));
+                URL myURL = new URL(getString(R.string.server_ip) + "auth");
                 //HttpURLConnection urlConnection = (HttpURLConnection) myURL.openConnection();
                 HttpURLConnection conn = (HttpURLConnection) myURL.openConnection();
                 conn.setReadTimeout(10000);
@@ -477,7 +477,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
                 conn.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("key", "auth")
                         .appendQueryParameter("login", mEmail)
                         .appendQueryParameter("pass", mPassword);
                 String query = builder.build().getEncodedQuery();
@@ -551,7 +550,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
                     if (code == 200)
                     {
                         answer = dataJsonObj.getInt("UserID");
-                        //secret = dataJsonObj.getString("SecretCode");
+                        secret = dataJsonObj.getString("Secret");
                         name = dataJsonObj.getString("Name");
                         sur = dataJsonObj.getString("Surname");
                         pat = dataJsonObj.getString("Patronymic");
@@ -569,7 +568,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
                     }
                 } catch (JSONException e) {
                     Toast toast = Toast.makeText(getApplicationContext(),
-                            "Ошибка на стороне сервера",
+                            e.getMessage(),
                             Toast.LENGTH_SHORT);
                     toast.show();
                     return;

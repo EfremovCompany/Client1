@@ -1,6 +1,8 @@
 package efremov.sg.domoffon;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -21,6 +23,16 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -29,6 +41,10 @@ import android.app.Activity;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
     protected static final String LOG_TAG = "my_tag";
@@ -59,7 +75,7 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         Intent intent = getIntent();
         intent.getIntExtra("response", user_id);
-        //secret = intent.getStringExtra("secret");
+        secret = intent.getStringExtra("secret");
         name = intent.getStringExtra("name");
         surname = intent.getStringExtra("surname");
         patronymic = intent.getStringExtra("patronymic");
@@ -91,7 +107,7 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         nameTxt.setText(name);
         surTxt.setText(surname);
         patTxt.setText(patronymic);
-        TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
+        /*TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
         // инициализация
         tabHost.setup();
 
@@ -111,27 +127,20 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(LOG_TAG, "tabId = " + tabId);
 
             }
-        });
+        });*/
         //Товары
-        lvP = (ListView)findViewById(R.id.listview_product);
-        mProductList = new ArrayList<>();
-
-        mProductList.add(new Product(0,"text", "des", 12, 12));
-        mProductList.add(new Product(1,"text1", "des12", 10, 10));
-        mProductList.add(new Product(2,"text2", "ds", 1, 12));
-
-        adapterP = new ProductListAdapter(getApplicationContext(), mProductList);
-        lvP.setAdapter(adapterP);
+        ProductTask task = new ProductTask(secret);
+        task.execute();
         //Предложения
-        lvA = (ListView)findViewById(R.id.listview_a);
-        mProductListA = new ArrayList<>();
+        //lvA = (ListView)findViewById(R.id.listview_a);
+        //mProductListA = new ArrayList<>();
 
-        mProductListA.add(new Product(0,"text", "des", 12, 1));
-        mProductListA.add(new Product(1,"text1", "des12", 10, 1));
-        mProductListA.add(new Product(2,"text2", "ds", 1, 1));
+        //mProductListA.add(new Product(0,"text", "des", 12, 1));
+        //mProductListA.add(new Product(1,"text1", "des12", 10, 1));
+        //mProductListA.add(new Product(2,"text2", "ds", 1, 1));
 
-        adapterA = new ProductListAdapter(getApplicationContext(), mProductListA);
-        lvA.setAdapter(adapterA);
+        //adapterA = new ProductListAdapter(getApplicationContext(), mProductListA);
+        //lvA.setAdapter(adapterA);
 
         //mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 
@@ -150,8 +159,17 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         //        (R.color.primary_material_light_1, R.color.colorAccent,R.color.colorPrimaryDark);
     }
 
+    public void SetAdapter(List<Product> product){
+        lvP = (ListView)findViewById(R.id.listview_product);
+        adapterP = new ProductListAdapter(getApplicationContext(), product);
+        lvP.setAdapter(adapterP);
+    }
+
     @Override
     public void onRefresh() {
+        adapterP.clear();
+        ProductTask task = new ProductTask(secret);
+        task.execute();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -223,5 +241,114 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public class ProductTask extends AsyncTask<Void, Void, Boolean> {
+
+        private String response;
+
+        private final String mSecret;
+
+        ProductTask(String secret) {
+            mSecret = secret;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                Thread.sleep(2000);
+                URL myURL = new URL(getString(R.string.server_ip) + "getproduct");
+                //HttpURLConnection urlConnection = (HttpURLConnection) myURL.openConnection();
+                HttpURLConnection conn = (HttpURLConnection) myURL.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("secret", mSecret);
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer resp = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    resp.append(inputLine);
+                }
+                in.close();
+
+                response = resp.toString();
+                // Simulate network access
+            } catch (InterruptedException e) {
+                return false;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                response = e.getMessage();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+                response = e.getMessage();
+            } catch (IOException e) {
+                e.printStackTrace();
+                response = e.getMessage();
+            }
+
+            // TODO: register the new account here.
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+            if (success) {
+                mProductList = new ArrayList<>();
+                //TODO: append check response
+                try {
+                    JSONObject dataJsonObj = new JSONObject(response);
+                    int code = dataJsonObj.getInt("Code");
+                    int count = dataJsonObj.getInt("Count");
+                    JSONArray array = dataJsonObj.getJSONArray("ProductI");
+                    if (code == 200)
+                    {
+                        for (int i = 0; i < array.length(); i++){
+                            JSONObject obj = array.getJSONObject(i);
+                            mProductList.add(new Product(i, obj.getString("Name"), obj.getString("Des"), obj.getInt("Count"), obj.getInt("Min_prise"), obj.getString("Scr")));
+                        }
+                        SetAdapter(mProductList);
+                    }
+                    else
+                    {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                dataJsonObj.getString("Error"),
+                                Toast.LENGTH_SHORT);
+                        toast.show();
+                        return;
+                    }
+                } catch (JSONException e) {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            e.getMessage(),
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                    return;
+                }
+
+                //finish();
+            } else {
+            }
+        }
     }
 }
