@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="efremov.sg.domoffon.ItemInfoActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:id="@+id/iName"
+        android:textSize="14pt"
+        android:textAlignment="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="des"
+        android:id="@+id/iDes"
+        android:textSize="10pt"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"/>
+    <ImageView android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/logo"/>
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:max="100"
+        android:progress="3"/>
+    <TextView android:text="Кол-во"
+        android:id="@+id/iCounter"
+        android:textAlignment="center"/>
+    <TextView
+        android:id="@+id/iCountLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:text="Количество"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"/>
+    <TextView
+        android:id="@+id/iPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:text="Стоимость"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"/>
+    <Button
+        android:id="@+id/iButton"
+        android:text="Купить" />
+</TableLayout>

@@ -3,7 +3,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func getorderinfo(w http.ResponseWriter, r *http.Request) {
@@ -11,29 +13,37 @@ func getorderinfo(w http.ResponseWriter, r *http.Request) {
 		BadSecret(w)
 		return
 	}
-	rows := GetAnswer("SELECT idproduct FROM mydb.order WHERE iduser=" + r.FormValue("id"))
+	fmt.Println("gs")
+	rows := GetAnswer("SELECT idorder FROM my_db.order WHERE iduser=" + r.FormValue("id"))
 	i := 0
 	for rows.Next() {
-
 		i += 1
 	}
-	rows = GetAnswer("SELECT idorder, idproduct, status, price, addr FROM mydb.order WHERE iduser=" + r.FormValue("id"))
-
 	var prod []Orders = make([]Orders, i)
+	rows = GetAnswer("SELECT idorder, idproduct, status, price, addr FROM my_db.order WHERE iduser=" + r.FormValue("id"))
+	fmt.Println(rows)
 
 	counter := 0
 
 	for rows.Next() {
-		var id int
+		fmt.Println("JO")
+		var uid int
 		var idProduct int
 		var status string
 		var price int
 		var addr string
-		err := rows.Scan(&id, &idProduct, &status, &price, &addr)
+		err := rows.Scan(&uid, &idProduct, &status, &price, &addr)
 
 		checkErr(err)
 
-		prod[counter] = Orders{id, idProduct, status, price, addr}
+		var name string
+		rows = GetAnswer("SELECT name FROM my_db.product WHERE idproduct=" + strconv.Itoa(uid))
+		for rows.Next() {
+			err := rows.Scan(&name)
+			checkErr(err)
+		}
+
+		prod[counter] = Orders{uid, idProduct, status, price, addr, name}
 		counter = counter + 1
 	}
 	jsonM := OrderArray{200, counter, prod}

@@ -145,6 +145,14 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         //mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 
         //Настраиваем выполнение OnRefreshListener для данной activity:
+        lvP = (ListView)findViewById(R.id.listview_product);
+        lvP.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Log.d(LOG_TAG, "itemClick: position = " + position + ", id = "
+                        + id);
+            }
+        });
         mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefresh.setOnRefreshListener(this);
 
@@ -153,14 +161,13 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-        //mSwipeRefresh.setOnRefreshListener(this);
+        mSwipeRefresh.setOnRefreshListener(this);
         //Настраиваем цветовую тему значка обновления, используя наши цвета:
         //mSwipeRefresh.setColorSchemeResources
         //        (R.color.primary_material_light_1, R.color.colorAccent,R.color.colorPrimaryDark);
     }
 
     public void SetAdapter(List<Product> product){
-        lvP = (ListView)findViewById(R.id.listview_product);
         adapterP = new ProductListAdapter(getApplicationContext(), product);
         lvP.setAdapter(adapterP);
     }
@@ -176,9 +183,6 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
                 // Отменяем анимацию обновления
                 mSwipeRefresh.setRefreshing(false);
                 Random random = new Random();
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Пора покормить кота!", Toast.LENGTH_SHORT);
-                toast.show();
             }
         }, 4000);
     }
@@ -223,19 +227,40 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        findViewById(R.id.include_edit).setVisibility(View.INVISIBLE);
-        findViewById(R.id.include_main).setVisibility(View.INVISIBLE);
-        findViewById(R.id.include_my).setVisibility(View.INVISIBLE);
-        findViewById(R.id.include_send).setVisibility(View.INVISIBLE);
+        //findViewById(R.id.include_edit).setVisibility(View.INVISIBLE);
+        //findViewById(R.id.include_main).setVisibility(View.INVISIBLE);
+        //findViewById(R.id.include_my).setVisibility(View.INVISIBLE);
+        //findViewById(R.id.include_send).setVisibility(View.INVISIBLE);
 
         if (id == R.id.nav_spec) {
-            findViewById(R.id.include_main).setVisibility(View.VISIBLE);
+            //findViewById(R.id.include_main).setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_my) {
-            findViewById(R.id.include_my).setVisibility(View.VISIBLE);
+            Intent intent = new Intent(this, MyOrdersActivity.class);
+            intent.putExtra("response", id);
+            intent.putExtra("secret", secret);
+            intent.putExtra("name", name);
+            intent.putExtra("surname", surname);
+            intent.putExtra("patronymic", patronymic);
+            //intent.putExtra("cdek", c);
+            intent.putExtra("addr", addr);
+            intent.putExtra("phone", phone);
+
+            startActivity(intent);
         } else if (id == R.id.nav_edit) {
-            findViewById(R.id.include_edit).setVisibility(View.VISIBLE);
+            Intent intent = new Intent(this, EditUserActivity.class);
+            intent.putExtra("response", id);
+            intent.putExtra("secret", secret);
+            intent.putExtra("name", name);
+            intent.putExtra("surname", surname);
+            intent.putExtra("patronymic", patronymic);
+            //intent.putExtra("cdek", c);
+            intent.putExtra("addr", addr);
+            intent.putExtra("phone", phone);
+
+            startActivity(intent);
+            //findViewById(R.id.include_edit).setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_send) {
-            findViewById(R.id.include_send).setVisibility(View.VISIBLE);
+            //findViewById(R.id.include_send).setVisibility(View.VISIBLE);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

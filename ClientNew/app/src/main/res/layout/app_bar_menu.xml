@@ -21,8 +21,9 @@
     </android.support.design.widget.AppBarLayout>
 
         <include android:visibility="visible" layout="@layout/content_menu"
-            android:id="@+id/include_main" />
+            android:id="@+id/include_main"  />
         <include android:visibility="invisible" android:id="@+id/include_edit" layout="@layout/activity_edit_user" />
     <include android:visibility="invisible" android:id="@+id/include_my" layout="@layout/my_cells"/>
     <include android:visibility="invisible" android:id="@+id/include_send" layout="@layout/send_error"/>
+
 </android.support.design.widget.CoordinatorLayout>

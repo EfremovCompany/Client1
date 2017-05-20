@@ -38,6 +38,7 @@ type Orders struct {
 	Status    string
 	Price     int
 	Addr      string
+	Name      string
 }
 
 type OrderArray struct {

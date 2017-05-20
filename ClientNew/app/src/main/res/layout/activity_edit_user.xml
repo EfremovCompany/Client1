@@ -5,7 +5,7 @@
 
     !-- Login progress -->
     <ProgressBar
-        android:id="@+id/login_progress"
+        android:id="@+id/elogin_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         android:layout_height="458dp">
 
         <LinearLayout
-            android:id="@+id/email_login_form"
+            android:id="@+id/eemail_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/password_old"
+                    android:id="@+id/epassword_old"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/password"
+                    android:id="@+id/epassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Новый пароль"
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/confirm_password"
+                    android:id="@+id/econfirm_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_confirm_password"
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/addr"
+                    android:id="@+id/eaddr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_addr"
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/surname"
+                    android:id="@+id/esurname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_surname"
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/name"
+                    android:id="@+id/ename"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_name"
@@ -127,7 +127,7 @@
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/patronymic"
+                    android:id="@+id/epatronymic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_patronymic"
@@ -138,7 +138,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/eemail_sign_in_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -151,13 +151,13 @@
         </LinearLayout>
     </ScrollView>
     <TextView
-        android:layout_alignParentBottom="true"
         android:autoLink="web"
         android:layout_width="wrap_content"
-        android:layout_marginBottom="0dp"
         android:layout_height="36dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/banner"
-        android:id="@+id/textView2" />
+        android:id="@+id/textView2"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

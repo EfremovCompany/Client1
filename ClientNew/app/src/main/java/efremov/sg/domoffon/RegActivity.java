@@ -441,7 +441,7 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
 
             try {
                 Thread.sleep(2000);
-                URL myURL = new URL(getString(R.string.server_ip));
+                URL myURL = new URL(getString(R.string.server_ip) + "reg");
                 //HttpURLConnection urlConnection = (HttpURLConnection) myURL.openConnection();
                 HttpURLConnection conn = (HttpURLConnection) myURL.openConnection();
                 conn.setReadTimeout(10000);
@@ -451,7 +451,7 @@ public class RegActivity extends AppCompatActivity implements LoaderCallbacks<Cu
                 conn.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("key", "reg")
+                        //.appendQueryParameter("key", "reg")
                         .appendQueryParameter("login", mEmail)
                         .appendQueryParameter("pass", mPassword)
                         .appendQueryParameter("addr", mAddr)

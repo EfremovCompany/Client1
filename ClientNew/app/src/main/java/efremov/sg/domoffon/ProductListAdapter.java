@@ -37,6 +37,15 @@ public class ProductListAdapter  extends BaseAdapter{
     private Context mContext;
     private List<Product> mProductList;
 
+    // статический ViewHolder класс внутри адаптера
+    public static final class ViewHolder {
+        View v;
+        TextView txName;
+        TextView txDes;
+        TextView txCount;
+        TextView txPrice;
+    }
+
     public ProductListAdapter(Context mContext, List<Product> mProductList) {
         this.mContext = mContext;
         this.mProductList = mProductList;
@@ -64,35 +73,36 @@ public class ProductListAdapter  extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v = View.inflate(mContext, R.layout.item_product, null);
-        TextView txName = (TextView)v.findViewById(R.id.listview_item_name);
-        TextView txDes = (TextView)v.findViewById(R.id.listview_item_des);
-        TextView txCount = (TextView)v.findViewById(R.id.listview_item_count);
-        TextView txPrice = (TextView)v.findViewById(R.id.listview_item_price);
-        ImageView imView = (ImageView)v.findViewById(R.id.listview_item_img);
+        ViewHolder holder = new ViewHolder();;
+        holder.v = View.inflate(mContext, R.layout.item_product, null);
+        holder.txName = (TextView)holder.v.findViewById(R.id.listview_item_name);
+        holder.txDes = (TextView)holder.v.findViewById(R.id.listview_item_des);
+        holder.txCount = (TextView)holder.v.findViewById(R.id.listview_item_count);
+        holder.txPrice = (TextView)holder.v.findViewById(R.id.listview_item_price);
+        //ImageView imView = (ImageView)v.findViewById(R.id.listview_item_img);
 
-        txName.setText(mProductList.get(position).getName());
-        txDes.setText("    " + mProductList.get(position).getDes());
-        txCount.setText("Количество: " + String.valueOf(mProductList.get(position).getCount()));
-        txPrice.setText(String.valueOf(mProductList.get(position).getPrice()) + " руб.");
+        holder.txName.setText(mProductList.get(position).getName());
+        holder.txDes.setText("    " + mProductList.get(position).getDes());
+        holder.txCount.setText("Количество: " + String.valueOf(mProductList.get(position).getCount()));
+        holder.txPrice.setText(String.valueOf(mProductList.get(position).getPrice()) + " руб.");
 
-        if (!"none".contains(mProductList.get(position).getSrc())) {
-            IMGTask task = new IMGTask(mProductList.get(position).getSrc());
-            task.execute();
-            while (!task.isEnd)
-            {}
-            imView.setImageBitmap(task.GetIMG());
+        //if (!"none".contains(mProductList.get(position).getSrc())) {
+            //IMGTask task = new IMGTask(mProductList.get(position).getSrc());
+            //task.execute();
+            //while (!task.isEnd)
+            //{}
+            //imView.setImageBitmap(task.GetIMG());
             /*try {
                 final Bitmap bitmap = BitmapFactory.decodeStream(new URL(mProductList.get(position).getSrc()).openStream());
                 imView.setImageBitmap(bitmap);
             } catch (Exception e) {
                 e.getMessage();
             }*/
-        }
+        //}
 
-        v.setTag(mProductList.get(position).getId());
+        holder.v.setTag(mProductList.get(position).getId());
 
-        return v;
+        return holder.v;
     }
 
     public class IMGTask extends AsyncTask<Void, Void, Boolean> {
